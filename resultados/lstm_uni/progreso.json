@@ -1,8 +1,0 @@
-{
-  "model": "lstm_uni",
-  "epoch": 21,
-  "step": 3500,
-  "steps_per_epoch": 3969,
-  "train_mse_normalized": 0.399584230582762,
-  "elapsed_seconds": 23.56486080000468
-}

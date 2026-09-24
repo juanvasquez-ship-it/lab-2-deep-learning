@@ -9,3 +9,7 @@ __pycache__/
 !.env.example
 *.pem
 *.key
+resultados/**/*.log
+resultados/**/progreso.json
+resultados/estado_estudio.json
+resultados/**/*.tmp

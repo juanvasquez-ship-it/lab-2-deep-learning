@@ -43,12 +43,12 @@
   "test_export_checked": true,
   "source_sha256": {
     "datos.py": "cd30e3e8a59cd32b6695ed0a4a4c6f37bb99c5eb3eafe1201eec30844bc13325",
-    "ejecutar.py": "71e23af450e2edd9159f375288853692a8fb8101beecf8f07fdca7745e71ba0f",
-    "estudios.py": "10099aa0d4ad958d246c09381918ec51be6e1d954bcc8a2108f28dd5366385d6",
-    "informe.py": "abb0908f4ed55a9ef94e41b08b9022e675c386f6d87314437497d5d2a4715cad",
+    "ejecutar.py": "b27605d698e988f078bf1cdf0d51e5059e1b1159c7ae02ffd452688a250651ec",
+    "estudios.py": "b12ba5f07205b9ce7ee8622c980cd96c3dc1c136bfc0ad3d0a77a56508f8bcb6",
+    "informe.py": "f3bd7f5ff98d62c7de9f98da8efabcf27272795e7fc2f77290ba464db0d96612",
     "metricas.py": "7a3fc4349ca28c99dbd2dcdc7d6181ebd6ab2b226422d69ba6db4168d995c277",
     "modelos.py": "f01b48a7fdce16d257ef9220a22da708c655a9b39f44dce8c4b106282ca897c2",
-    "validar.py": "5733ad2b1db3ef7402a3ce640bbbb20b79fe68d877935a241f8dd161c36dfa30",
+    "validar.py": "69c8f06fab5101b0dee006ee86e40af5c844c6ba62b6b0884399279a598e4ba0",
     "config.json": "10061f8a18e65ce15517c922e74d84ebcf1eb8380483ceeaf4129b4952a8659d",
     "requirements.txt": "15703fd4f97c54fdb3563b1d27d8b71213a02faca1021c0fad087de5453db76e"
   }

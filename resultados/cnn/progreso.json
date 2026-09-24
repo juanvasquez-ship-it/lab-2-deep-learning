@@ -1,8 +1,0 @@
-{
-  "model": "cnn",
-  "epoch": 44,
-  "step": 3500,
-  "steps_per_epoch": 3969,
-  "train_mse_normalized": 0.3585199784577292,
-  "elapsed_seconds": 27.55842240000493
-}

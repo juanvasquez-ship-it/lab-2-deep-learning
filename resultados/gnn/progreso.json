@@ -1,8 +1,0 @@
-{
-  "model": "gnn",
-  "epoch": 19,
-  "step": 3500,
-  "steps_per_epoch": 3969,
-  "train_mse_normalized": 0.3749840480294079,
-  "elapsed_seconds": 38.10244740000053
-}

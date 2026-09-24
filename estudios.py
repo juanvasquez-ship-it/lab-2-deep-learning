@@ -197,7 +197,6 @@ def interpretabilidad(config, device):
 
 def verificar(config):
     from hashlib import sha256
-    from metricas import calcular
     import csv
     result = {}
     reference = None

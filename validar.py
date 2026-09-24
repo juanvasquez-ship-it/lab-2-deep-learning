@@ -11,7 +11,7 @@ import torch
 from datos import ROOT, CaudalDataset, guardar_json, ruta
 from ejecutar import semilla, entorno, modelo, sincronizar
 from metricas import calcular
-from modelos import CapaCompleja, FDMLP, AtencionVariables, ConvolucionVariables, GrafoVariables
+from modelos import CapaCompleja, FDMLP
 
 
 def ampliacion():

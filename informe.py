@@ -211,12 +211,12 @@ def main():
                "El archivo principal es `resultados/fdmlp/predicciones_test.csv`, con Id y q_01…q_48, 27.983 filas en el orden original, en mm/h. Se aplica máximo(predicción, 0) únicamente para imponer caudales no negativos, se conservan los valores crudos y también las métricas de validación con y sin ese recorte. Las predicciones de los comparadores se conservan en sus respectivas carpetas.", "",
                "Las limitaciones principales son la ausencia de fechas y coordenadas, la falta de los hiperparámetros del suplemento y la realización de una sola semilla. No se puede certificar independencia temporal entre particiones ni comparar numéricamente RMSE en mm/h con el RMSE en m³/s del paper. La FFT describe el eje de variables, su frecuencia depende del orden de canales y no debe interpretarse directamente como periodicidad temporal o causalidad hidrológica.", "",
                "Las adaptaciones, ecuaciones y comandos de reproducción se documentan en README.md. No se generaron matrices de confusión porque este problema es de regresión."]
-    report += estudio_ampliado(config, arrays, metrics, basins, figures)
+    report += estudio_ampliado(arrays, metrics, figures)
     (ROOT / "RESULTADOS.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     print("Informe y figuras generados.")
 
 
-def estudio_ampliado(config, arrays, metrics, basins, figures):
+def estudio_ampliado(arrays, metrics, figures):
     out = ROOT / "resultados"
     report = ["", "## Comparación experimental ampliada", "",
               "Los cinco modelos del artículo se adaptan al mismo pronóstico de 48 horas. Se evalúan prefijos de 12, 24 y 48 horas del mismo modelo, y cada hora por separado. No son tres modelos reentrenados con horizontes distintos, ni equivalen a los 1, 3 y 5 días del artículo. La ventana de 336 horas y la salida de 48 horas se mantienen por la consigna y los datos disponibles.", "",

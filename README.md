@@ -27,6 +27,8 @@ No se necesita una API de OpenAI ni otro servicio externo para entrenar o ejecut
 
 El repositorio incluye código, documentación, métricas, figuras, checkpoints y predicciones de las ejecuciones realizadas. Los archivos HDF5 del dataset y el entorno `.venv` se conservan localmente y no se distribuyen en Git.
 
+Los registros de consola, los estados transitorios de progreso y los archivos temporales de guardado se generan localmente cuando se ejecutan los scripts y se excluyen de Git. La evidencia permanente del entrenamiento se conserva en `historial.csv` y `finalizado.json` de cada modelo. Los checkpoints, las pruebas de validación y las predicciones crudas se mantienen para reanudación, verificación y análisis.
+
 Para ejecutar el proyecto después de clonarlo, crear el entorno siguiendo las instrucciones de abajo, obtener los datos del laboratorio y ajustar `train_path`, `test_path` y `metadata_path` en `config.json` a sus ubicaciones locales. La ruta de entrenamiento guardada corresponde al equipo donde se realizaron los experimentos. Los checkpoints conservan su configuración original como evidencia de esas ejecuciones.
 
 ## Entorno y ejecución
