@@ -1,0 +1,26 @@
+[
+  {
+    "criterion": "Menor error",
+    "Id": 231827,
+    "basin_id": 238,
+    "RMSE": 0.0006495612324215472
+  },
+  {
+    "criterion": "Error mediano",
+    "Id": 163894,
+    "basin_id": 274,
+    "RMSE": 0.012177686206996441
+  },
+  {
+    "criterion": "Mayor error",
+    "Id": 225537,
+    "basin_id": 174,
+    "RMSE": 3.3448636531829834
+  },
+  {
+    "criterion": "Mayor caudal observado",
+    "Id": 100073,
+    "basin_id": 208,
+    "RMSE": 2.8924880027770996
+  }
+]

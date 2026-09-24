@@ -1,0 +1,14 @@
+{
+  "python": "3.10.8",
+  "system": "Windows-10-10.0.26200-SP0",
+  "torch": "2.1.1+cu121",
+  "numpy": "1.26.4",
+  "cuda": "12.1",
+  "cudnn": 8801,
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4080 SUPER",
+  "gpu_memory_free_total": [
+    15792603136,
+    17170956288
+  ]
+}

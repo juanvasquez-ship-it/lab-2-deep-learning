@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "pilot": [
+    {
+      "model": "am",
+      "parameters": 223680,
+      "pilot_steps": 5,
+      "losses": [
+        1.6481118202209473,
+        1.6477540731430054,
+        1.6474039554595947,
+        1.6470564603805542,
+        1.6467113494873047
+      ],
+      "amp_max_abs_error": 5.459785461425781e-05,
+      "peak_mib": 271.55029296875
+    },
+    {
+      "model": "cnn",
+      "parameters": 212284,
+      "pilot_steps": 5,
+      "losses": [
+        1.6481550931930542,
+        1.6477950811386108,
+        1.647440791130066,
+        1.6470921039581299,
+        1.6467450857162476
+      ],
+      "amp_max_abs_error": 5.455315113067627e-05,
+      "peak_mib": 272.79736328125
+    },
+    {
+      "model": "gnn",
+      "parameters": 211168,
+      "pilot_steps": 5,
+      "losses": [
+        1.6481636762619019,
+        1.6478028297424316,
+        1.6474497318267822,
+        1.6470998525619507,
+        1.6467514038085938
+      ],
+      "amp_max_abs_error": 5.4389238357543945e-05,
+      "peak_mib": 299.85986328125
+    },
+    {
+      "model": "lstm_uni",
+      "parameters": 205360,
+      "pilot_steps": 5,
+      "losses": [
+        1.651142954826355,
+        1.6507290601730347,
+        1.6503241062164307,
+        1.6499159336090088,
+        1.6495113372802734
+      ],
+      "amp_max_abs_error": 5.406886339187622e-05,
+      "peak_mib": 249.205078125
+    }
+  ],
+  "original_checkpoint_predictions_preserved": true,
+  "FHV_FLV_known_cases": true,
+  "pilot_weights_used_in_final_training": false
+}

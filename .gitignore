@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.h5
+*.hdf5
+*.zip
+.env
+.env.*
+!.env.example
+*.pem
+*.key

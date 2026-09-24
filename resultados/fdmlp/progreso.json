@@ -1,0 +1,8 @@
+{
+  "model": "fdmlp",
+  "epoch": 20,
+  "step": 3500,
+  "steps_per_epoch": 3969,
+  "train_mse_normalized": 0.3558166583234976,
+  "elapsed_seconds": 118.49222159999772
+}

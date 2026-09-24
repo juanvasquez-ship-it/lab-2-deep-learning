@@ -1,0 +1,22 @@
+{
+  "CPU": {
+    "Name": "AMD Ryzen 7 9800X3D 8-Core Processor           ",
+    "NumberOfCores": 8,
+    "NumberOfLogicalProcessors": 8
+  },
+  "OS": {
+    "Caption": "Microsoft Windows 11 Home",
+    "TotalVisibleMemorySize": 32624336,
+    "FreePhysicalMemory": 1990380
+  },
+  "Disks": [
+    {
+      "DeviceID": "C:",
+      "FreeSpace": 281337307136
+    },
+    {
+      "DeviceID": "D:",
+      "FreeSpace": 997471166464
+    }
+  ]
+}

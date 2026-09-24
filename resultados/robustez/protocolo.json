@@ -1,0 +1,30 @@
+{
+  "models": [
+    "lstm",
+    "am",
+    "cnn",
+    "gnn",
+    "fdmlp"
+  ],
+  "samples": 18142,
+  "noise_std_normalized": [
+    0.1,
+    0.5,
+    1.0
+  ],
+  "missing_rates": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "auxiliary_channels": [
+    1,
+    6,
+    3
+  ],
+  "auxiliary_selection": "top 3 absolute training LASSO coefficients, excluding discharge",
+  "same_random_realizations_across_models_and_levels": true,
+  "imputation": "linear interpolation within history; nearest observed at edges; training mean if all missing",
+  "retraining_after_corruption": false,
+  "seed": 42
+}

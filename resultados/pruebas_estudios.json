@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "deterministic_perturbations": true,
+  "unmodified_channels_preserved": true,
+  "all_missing_fallback": true,
+  "spectral_gradients_finite_nonzero": true
+}

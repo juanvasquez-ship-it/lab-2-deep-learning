@@ -1,0 +1,27 @@
+[
+  {
+    "file": "C:\\Users\\msdro\\Downloads\\train-001.h5",
+    "bytes": 5076559230,
+    "sha256": "38a1e2dee5f9aa61f5e1543dc6f7c22689f6ee3059511498022df31f01730078"
+  },
+  {
+    "file": "C:\\Users\\msdro\\Downloads\\Laboratorio 2.pdf",
+    "bytes": 104220,
+    "sha256": "bf14bfa41335acd4ffae3986004a49ec10f65c6b00e933bc0a885416e939aafa"
+  },
+  {
+    "file": "C:\\Users\\msdro\\Downloads\\main (2).pdf",
+    "bytes": 11125727,
+    "sha256": "97b8de7c0a0049697066e4f4f493276b521d1fe768cb145d6146e17c4f985a99"
+  },
+  {
+    "file": "C:\\Users\\msdro\\Documents\\Codex\\2026-09-24\\v\\outputs\\laboratorio2\\data\\test.h5",
+    "bytes": 453545536,
+    "sha256": "2a8f641e01ecd71a37033868e111e733bdd0119909e07d0387b7be8a62a85580"
+  },
+  {
+    "file": "C:\\Users\\msdro\\Documents\\Codex\\2026-09-24\\v\\outputs\\laboratorio2\\data\\metadata.json",
+    "bytes": 2757,
+    "sha256": "a4d3bcb4c7015a3dc65a644432bf6e6ddfd3133a481ceb559882f6e5418fa7c3"
+  }
+]
