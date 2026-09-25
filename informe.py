@@ -17,6 +17,8 @@ from metricas import calcular, resumen, extremos_fdc
 NAMES = {"lstm": "LSTM base", "am": "AM-LSTM", "cnn": "CNN-LSTM", "gnn": "GNN-LSTM", "fdmlp": "FDMLP-LSTM", "fdmlp_lineal": "FDMLP sin CReLU", "lstm_uni": "LSTM univariado", "persistencia": "Persistencia"}
 COLORS = {"lstm": "#3465a4", "am": "#b67619", "cnn": "#8754a1", "gnn": "#008c95", "fdmlp": "#b43d38", "fdmlp_lineal": "#5d8a4a", "lstm_uni": "#bd6c96", "persistencia": "#777777"}
 PRIMARY = ["lstm", "am", "cnn", "gnn", "fdmlp"]
+NAMES.update(mlp="MLP-LSTM", fdmlp_residual="FDMLP residual", mlp_residual="MLP residual")
+COLORS.update(mlp="#495d75", fdmlp_residual="#c47531", mlp_residual="#746751")
 
 
 def tabla(path, rows):
@@ -212,8 +214,55 @@ def main():
                "Las limitaciones principales son la ausencia de fechas y coordenadas, la falta de los hiperparámetros del suplemento y la realización de una sola semilla. No se puede certificar independencia temporal entre particiones ni comparar numéricamente RMSE en mm/h con el RMSE en m³/s del paper. La FFT describe el eje de variables, su frecuencia depende del orden de canales y no debe interpretarse directamente como periodicidad temporal o causalidad hidrológica.", "",
                "Las adaptaciones, ecuaciones y comandos de reproducción se documentan en README.md. No se generaron matrices de confusión porque este problema es de regresión."]
     report += estudio_ampliado(arrays, metrics, figures)
+    if all(k in metrics for k in ("mlp", "fdmlp_residual", "mlp_residual")):
+        report += controles_metodologicos(metrics, timing, figures)
     (ROOT / "RESULTADOS.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     print("Informe y figuras generados.")
+
+
+def controles_metodologicos(metrics, timing, figures):
+    kinds = ["lstm", "fdmlp", "mlp", "fdmlp_residual", "mlp_residual"]
+    report = ["", "## Controles del módulo y de la inicialización", "",
+              "Se conserva el FDMLP original. Se añaden un MLP real y dos variantes residuales con la semilla 42, las mismas muestras y el mismo criterio de parada. Son controles exploratorios planteados después de evaluar la versión inicial y reutilizan la misma validación, no constituyen una confirmación independiente. Las variantes residuales usan x + F(x), con la última transformación inicializada a 0,01 veces la identidad y sesgos cero. Se evalúa conjuntamente la conexión residual y el inicio cercano a identidad; este contraste no separa ambos efectos.", "",
+              "El MLP real aplica Linear(12,12), ReLU y Linear(12,12), sin Fourier. Su módulo tiene 312 parámetros frente a 56 del FDMLP, una diferencia de 256 parámetros (aproximadamente 0,12% del modelo completo). Esta diferencia deriva de las conexiones densas reales frente a los productos complejos elemento a elemento de la ecuación 11. El control contrasta familias de módulos, pero no aísla exclusivamente la base de Fourier ni iguala la capacidad de sus módulos.", "",
+              "| Modelo | RMSE (mm/h) | NSE | Parámetros totales | Mejor época | Épocas ejecutadas | Entrenamiento (min) |",
+              "|---|---:|---:|---:|---:|---:|---:|"]
+    rows = []
+    for kind in kinds:
+        t = timing[kind]
+        row = {"model": kind, "seed": 42, "RMSE": metrics[kind]["RMSE"], "NSE": metrics[kind]["NSE"],
+               "parameters": t["parameters"], "best_epoch": t["best_epoch"], "epochs": t["epochs"],
+               "training_minutes": t["total_training_seconds"]/60}
+        rows.append(row)
+        report.append(f"| {NAMES[kind]} | {row['RMSE']:.6f} | {row['NSE']:.5f} | {row['parameters']} | {row['best_epoch']} | {row['epochs']} | {row['training_minutes']:.2f} |")
+    tabla(ROOT / "resultados/controles_metodologicos.csv", rows)
+    fig, ax = plt.subplots(figsize=(9, 4), constrained_layout=True)
+    vals = [metrics[k]["RMSE"] for k in kinds]
+    ax.barh([NAMES[k] for k in kinds], vals, color=[COLORS[k] for k in kinds])
+    ax.invert_yaxis()
+    for i, value in enumerate(vals):
+        ax.text(value+.0003, i, f"{value:.5f}", va="center", fontsize=10)
+    ax.set(xlabel="RMSE de validación (mm/h), menor es mejor", xlim=(0, max(vals)*1.14))
+    fig.savefig(figures / "controles_metodologicos.png")
+    plt.close(fig)
+    report += ["", "El tiempo acumulado de entrenamiento depende de las épocas y de la carga del equipo durante cada ejecución. Los experimentos originales y los nuevos se realizaron en momentos distintos; estos minutos no constituyen un benchmark comparable de velocidad por lote.", "",
+               "![Controles metodológicos](resultados/figuras/controles_metodologicos.png)", ""]
+    for original, revised in (("fdmlp", "fdmlp_residual"), ("mlp", "mlp_residual"), ("mlp_residual", "fdmlp_residual")):
+        delta = 100*(metrics[revised]["RMSE"]/metrics[original]["RMSE"]-1)
+        report.append(f"Respecto a {NAMES[original]}, {NAMES[revised]} cambia el RMSE en {delta:+.2f}% (negativo significa menor error).")
+    report += ["", "La ablación sin CReLU conserva su finalidad original: medir el efecto de esa no linealidad. No demuestra por sí sola una ventaja del dominio frecuencial. El bloque completo con CReLU no empieza como identidad, aunque sus capas complejas aisladas sí tengan pesos identidad. Las pruebas de inicialización se conservan en `resultados/pruebas_controles.json`; la diferencia entre entrada y salida no es un porcentaje de información predictiva perdida.", "",
+               "Las diferencias de RMSE son descriptivas. Un resultado favorable de estas variantes no demuestra por sí solo la superioridad de Fourier ni identifica la causa del resultado original. No se incorporaron proyecciones latentes de 128 dimensiones, cambios a multiplicación compleja densa ni rotaciones aleatorias, porque no son correcciones demostradas por el texto del paper y ampliarían los factores experimentales."]
+    initialization = json.loads((ROOT / "resultados/pruebas_controles.json").read_text(encoding="utf-8"))
+    report += ["", "### Cambio de representación al inicializar", "",
+               "Medido en las mismas 64 ventanas de entrenamiento, seleccionadas con semilla 42 y normalizadas con las estadísticas de entrenamiento. Se informa 100 × norma(F(x) − x) / norma(x), antes de aprender. Este diagnóstico no es una métrica de pronóstico ni una medida de información perdida.", "",
+               "| Módulo | Cambio relativo inicial (%) |", "|---|---:|"]
+    for trial in initialization["trials"]:
+        report.append(f"| {NAMES[trial['model']]} | {100*trial['initial_relative_input_change']:.3f} |")
+    decision = ROOT / "resultados/presupuesto_semillas.json"
+    if decision.exists():
+        plan = json.loads(decision.read_text(encoding="utf-8"))
+        report += ["", "### Presupuesto de repeticiones", "", plan["explanation"]]
+    return report
 
 
 def estudio_ampliado(arrays, metrics, figures):

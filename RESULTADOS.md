@@ -21,11 +21,14 @@ Métricas de predicciones crudas, calculadas en unidades originales sobre las 48
 | FDMLP-LSTM | 0.10237 | 0.02707 | 0.64407 | 0.80286 | 0.46284 |
 | FDMLP sin CReLU | 0.10200 | 0.02293 | 0.64666 | 0.80449 | 0.61399 |
 | LSTM univariado | 0.10562 | 0.02549 | 0.62116 | 0.78908 | 0.57359 |
+| MLP-LSTM | 0.10168 | 0.02222 | 0.64885 | 0.80569 | 0.58329 |
+| FDMLP residual | 0.10199 | 0.02300 | 0.64673 | 0.80489 | 0.59476 |
+| MLP residual | 0.10173 | 0.02296 | 0.64852 | 0.80543 | 0.58379 |
 | Persistencia | 0.13786 | 0.02446 | 0.35455 | 0.69365 | 0.52509 |
 
 El menor RMSE entre modelos entrenados corresponde a **LSTM base**. El FDMLP-LSTM presenta un **incremento del RMSE de 0.77%** respecto al LSTM base y un **incremento de 0.36%** respecto a la versión sin CReLU. Esta comparación evalúa la adaptación implementada, no reproduce los valores del dataset original del paper.
 
-El ranking depende del criterio: FDMLP sin CReLU obtiene el menor MAE y FDMLP sin CReLU la mayor mediana de NSE por cuenca. Una ventaja en RMSE global no implica ser mejor en todas las cuencas o para todos los tamaños de error.
+El ranking depende del criterio: MLP-LSTM obtiene el menor MAE y FDMLP sin CReLU la mayor mediana de NSE por cuenca. Una ventaja en RMSE global no implica ser mejor en todas las cuencas o para todos los tamaños de error.
 
 ![Curvas de aprendizaje](resultados/figuras/aprendizaje.png)
 
@@ -44,6 +47,9 @@ El NSE global puede ocultar errores en cuencas de caudal pequeño. La siguiente 
 | FDMLP-LSTM | -384.18029 | 401/508 | -77764.56977 |
 | FDMLP sin CReLU | -209.62558 | 433/508 | -44426.96546 |
 | LSTM univariado | -432.71158 | 437/508 | -149059.00411 |
+| MLP-LSTM | -130.83071 | 438/508 | -27604.66553 |
+| FDMLP residual | -230.38837 | 432/508 | -64844.03505 |
+| MLP residual | -223.03155 | 435/508 | -60417.84067 |
 | Persistencia | 0.22925 | 433/508 | -19.37887 |
 
 El peor NSE del FDMLP-LSTM corresponde a la cuenca 369: -77764.57, con RMSE 0.006153 mm/h y desviación observada 0.00002207 mm/h. Al dividir por una varianza pequeña, NSE amplifica errores que parecen pequeños en unidades absolutas; el resultado indica una predicción deficiente respecto a la media observada de esa cuenca.
@@ -61,6 +67,9 @@ FDMLP-LSTM obtiene menor RMSE que el LSTM base en 138/508 cuencas y que la ablac
 | FDMLP-LSTM | 211,048 | 20 | 15 | 26.89 | 5.37 |
 | FDMLP sin CReLU | 211,048 | 21 | 16 | 26.27 | 5.53 |
 | LSTM univariado | 205,360 | 21 | 16 | 9.75 | 5.99 |
+| MLP-LSTM | 211,304 | 19 | 14 | 14.02 | 4.89 |
+| FDMLP residual | 211,048 | 17 | 12 | 12.63 | 5.23 |
+| MLP residual | 211,304 | 19 | 14 | 13.98 | 5.16 |
 
 Los tiempos incluyen lectura y transferencias. Durante la ejecución hubo otras aplicaciones que compartieron RAM y GPU; la variación de carga impide interpretar diferencias de tiempo entre variantes como diferencias intrínsecas de eficiencia. Tampoco son una comparación controlada con la RTX 3090 del paper. Los pilotos tienen calentamiento desigual y no se usan para afirmar superioridad computacional.
 
@@ -81,6 +90,9 @@ Se muestran automáticamente cuatro ventanas de validación, elegidas por menor,
 | FDMLP-LSTM | 0.66688 | -25.66611 | 0.01398 | 266.42040 |
 | FDMLP sin CReLU | 0.67196 | -24.42002 | 0.00977 | 84.72748 |
 | LSTM univariado | 0.70418 | -31.16588 | 0.00952 | 325.14525 |
+| MLP-LSTM | 0.67724 | -27.73629 | 0.00763 | 51.11308 |
+| FDMLP residual | 0.67443 | -27.19648 | 0.00864 | -71.42511 |
+| MLP residual | 0.67441 | -26.75536 | 0.00959 | 52.54417 |
 | Persistencia | 0.87494 | -15.78408 | 0.00858 | 11.52080 |
 
 Altos y bajos se definen con los percentiles 98 y 30 de las observaciones de validación, respectivamente, y se conservan exactamente las mismas máscaras para todos los modelos. El sesgo es 100 × suma(predicción − observación) / suma(observación). La suma de caudales específicos de ventanas posiblemente solapadas no representa un volumen físico total en m³. Estos diagnósticos condicionales no se presentan como una reproducción exacta de FHV/FLV. Los valores indefinidos no se reemplazan por cero.
@@ -102,6 +114,9 @@ En el grupo de caudales bajos, el sesgo medio del FDMLP-LSTM es 0.007405 mm/h y 
 | FDMLP-LSTM | 3.58 | 0.10237 | 0.10236 |
 | FDMLP sin CReLU | 8.52 | 0.10200 | 0.10198 |
 | LSTM univariado | 0.05 | 0.10562 | 0.10562 |
+| MLP-LSTM | 8.03 | 0.10168 | 0.10166 |
+| FDMLP residual | 16.09 | 0.10199 | 0.10194 |
+| MLP residual | 10.30 | 0.10173 | 0.10171 |
 
 El recorte físico se declara por separado y no interviene en la selección de checkpoints. Como los objetivos son no negativos, el recorte no puede aumentar el error cuadrático de una predicción negativa; tampoco resuelve los errores de magnitud o de anticipación de crecidas.
 
@@ -130,6 +145,9 @@ Las arquitecturas, las adaptaciones y su justificación se detallan en ADAPTACIO
 | FDMLP-LSTM | 0.06447 | 0.08667 | 0.10237 | 0.64407 |
 | FDMLP sin CReLU | 0.06186 | 0.08567 | 0.10200 | 0.64666 |
 | LSTM univariado | 0.06663 | 0.08971 | 0.10562 | 0.62116 |
+| MLP-LSTM | 0.06173 | 0.08515 | 0.10168 | 0.64885 |
+| FDMLP residual | 0.06360 | 0.08587 | 0.10199 | 0.64673 |
+| MLP residual | 0.06171 | 0.08533 | 0.10173 | 0.64852 |
 | Persistencia | 0.08232 | 0.11314 | 0.13786 | 0.35455 |
 
 ### Caudales extremos: curvas de duración
@@ -147,6 +165,9 @@ Definiciones: [NeuralHydrology, FHV y FLV](https://neuralhydrology.readthedocs.i
 | FDMLP-LSTM | -16.69461 | -17.34754 | -5.35937 | -787.65483 | 481/508 |
 | FDMLP sin CReLU | -14.47708 | 7.98193 | -10.61774 | -426.41600 | 481/508 |
 | LSTM univariado | -20.89416 | -43.68404 | -9.28286 | -25.74658 | 481/508 |
+| MLP-LSTM | -19.03790 | 8.18072 | -9.42440 | -453.48463 | 481/508 |
+| FDMLP residual | -17.92442 | 44.83367 | -12.04321 | -459.24266 | 481/508 |
+| MLP residual | -17.81966 | 16.84250 | -9.81745 | -466.28744 | 481/508 |
 | Persistencia | 3.11237 | 0.06126 | -4.01492 | 9.65465 | 481/508 |
 
 Se conserva sensibilidad de FLV a su suelo logarítmico en `resultados/sensibilidad_FLV.csv`. Los casos con denominador cero se declaran indefinidos. Como existen ceros y ventanas posiblemente solapadas, estas curvas son diagnósticos de los ejemplos evaluados, no curvas de una serie continua reconstruida.
@@ -221,3 +242,44 @@ Las tablas anteriores separan precisión, extremos, robustez y coste: el mejor r
 La validación también se empleó para seleccionar checkpoints y detener el entrenamiento, por lo que estos resultados pueden ser optimistas respecto a una evaluación independiente. Las predicciones de test se exportan, pero sus etiquetas no se han utilizado para obtener métricas. Sin fechas originales tampoco puede certificarse independencia temporal entre las particiones.
 
 El uso de múltiples variables reduce el RMSE del LSTM en 3.82% respecto al control univariado, lo que coincide en dirección con el beneficio de información adicional estudiado en el paper. Esa coincidencia no se extiende automáticamente a la ventaja del módulo frecuencial.
+
+## Controles del módulo y de la inicialización
+
+Se conserva el FDMLP original. Se añaden un MLP real y dos variantes residuales con la semilla 42, las mismas muestras y el mismo criterio de parada. Son controles exploratorios planteados después de evaluar la versión inicial y reutilizan la misma validación, no constituyen una confirmación independiente. Las variantes residuales usan x + F(x), con la última transformación inicializada a 0,01 veces la identidad y sesgos cero. Se evalúa conjuntamente la conexión residual y el inicio cercano a identidad; este contraste no separa ambos efectos.
+
+El MLP real aplica Linear(12,12), ReLU y Linear(12,12), sin Fourier. Su módulo tiene 312 parámetros frente a 56 del FDMLP, una diferencia de 256 parámetros (aproximadamente 0,12% del modelo completo). Esta diferencia deriva de las conexiones densas reales frente a los productos complejos elemento a elemento de la ecuación 11. El control contrasta familias de módulos, pero no aísla exclusivamente la base de Fourier ni iguala la capacidad de sus módulos.
+
+| Modelo | RMSE (mm/h) | NSE | Parámetros totales | Mejor época | Épocas ejecutadas | Entrenamiento (min) |
+|---|---:|---:|---:|---:|---:|---:|
+| LSTM base | 0.101586 | 0.64952 | 210992 | 14 | 19 | 14.87 |
+| FDMLP-LSTM | 0.102372 | 0.64407 | 211048 | 15 | 20 | 26.89 |
+| MLP-LSTM | 0.101683 | 0.64885 | 211304 | 14 | 19 | 14.02 |
+| FDMLP residual | 0.101989 | 0.64673 | 211048 | 12 | 17 | 12.63 |
+| MLP residual | 0.101731 | 0.64852 | 211304 | 14 | 19 | 13.98 |
+
+El tiempo acumulado de entrenamiento depende de las épocas y de la carga del equipo durante cada ejecución. Los experimentos originales y los nuevos se realizaron en momentos distintos; estos minutos no constituyen un benchmark comparable de velocidad por lote.
+
+![Controles metodológicos](resultados/figuras/controles_metodologicos.png)
+
+Respecto a FDMLP-LSTM, FDMLP residual cambia el RMSE en -0.37% (negativo significa menor error).
+Respecto a MLP-LSTM, MLP residual cambia el RMSE en +0.05% (negativo significa menor error).
+Respecto a MLP residual, FDMLP residual cambia el RMSE en +0.25% (negativo significa menor error).
+
+La ablación sin CReLU conserva su finalidad original: medir el efecto de esa no linealidad. No demuestra por sí sola una ventaja del dominio frecuencial. El bloque completo con CReLU no empieza como identidad, aunque sus capas complejas aisladas sí tengan pesos identidad. Las pruebas de inicialización se conservan en `resultados/pruebas_controles.json`; la diferencia entre entrada y salida no es un porcentaje de información predictiva perdida.
+
+Las diferencias de RMSE son descriptivas. Un resultado favorable de estas variantes no demuestra por sí solo la superioridad de Fourier ni identifica la causa del resultado original. No se incorporaron proyecciones latentes de 128 dimensiones, cambios a multiplicación compleja densa ni rotaciones aleatorias, porque no son correcciones demostradas por el texto del paper y ampliarían los factores experimentales.
+
+### Cambio de representación al inicializar
+
+Medido en las mismas 64 ventanas de entrenamiento, seleccionadas con semilla 42 y normalizadas con las estadísticas de entrenamiento. Se informa 100 × norma(F(x) − x) / norma(x), antes de aprender. Este diagnóstico no es una métrica de pronóstico ni una medida de información perdida.
+
+| Módulo | Cambio relativo inicial (%) |
+|---|---:|
+| FDMLP-LSTM | 69.205 |
+| MLP-LSTM | 58.811 |
+| FDMLP residual | 0.722 |
+| MLP residual | 0.809 |
+
+### Presupuesto de repeticiones
+
+Se conserva una sola semilla (42). El primer control, MLP-LSTM, completó 19 épocas en 15.02 minutos de entrenamiento y validación. Repetir los dos controles residuales con otra semilla se estimó en 30.03 minutos adicionales. Este coste supera el margen operativo de 12 minutos adoptado para evaluar repeticiones rápidas, por lo que no se iniciaron semillas adicionales. La decisión depende de duración y no del modelo ganador. Las diferencias entre modelos permanecen descriptivas, sin estimar variabilidad entre semillas. Los tres controles terminaron en 43.53 minutos de entrenamiento y validación en conjunto. Los dos residuales sumaron 28.51 minutos, confirmando que repetir el par excedería el margen previsto.

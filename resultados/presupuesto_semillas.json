@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "seeds_executed": [
+    42
+  ],
+  "additional_seeds": 0,
+  "decision_basis": "duration_only_not_model_ranking",
+  "first_completed_model": "mlp",
+  "first_completed_epochs": 19,
+  "first_training_validation_minutes": 15.016989508336701,
+  "extra_paired_models": [
+    "fdmlp_residual",
+    "mlp_residual"
+  ],
+  "estimated_minutes_per_additional_pair": 30.033979016673403,
+  "operational_extra_pair_threshold_minutes": 12,
+  "threshold_source": "operational choice to limit additional runtime, not a user-specified hard deadline",
+  "explanation": "Se conserva una sola semilla (42). El primer control, MLP-LSTM, completó 19 épocas en 15.02 minutos de entrenamiento y validación. Repetir los dos controles residuales con otra semilla se estimó en 30.03 minutos adicionales. Este coste supera el margen operativo de 12 minutos adoptado para evaluar repeticiones rápidas, por lo que no se iniciaron semillas adicionales. La decisión depende de duración y no del modelo ganador. Las diferencias entre modelos permanecen descriptivas, sin estimar variabilidad entre semillas. Los tres controles terminaron en 43.53 minutos de entrenamiento y validación en conjunto. Los dos residuales sumaron 28.51 minutos, confirmando que repetir el par excedería el margen previsto.",
+  "completed_controls": {
+    "mlp": {
+      "epochs": 19,
+      "training_validation_minutes": 15.016989508336701
+    },
+    "fdmlp_residual": {
+      "epochs": 17,
+      "training_validation_minutes": 13.547928408333004
+    },
+    "mlp_residual": {
+      "epochs": 19,
+      "training_validation_minutes": 14.961880371664787
+    }
+  },
+  "total_new_training_validation_minutes": 43.52679828833449,
+  "measured_additional_pair_minutes": 28.50980877999779
+}

@@ -28,7 +28,7 @@ La exposición se organiza en tres bloques de seis minutos. Las cifras finales y
 
 **12:00–13:30. Comparación principal.** Mostrar la tabla de `RESULTADOS.md`. Interpretar RMSE en mm/h, NSE respecto de predecir la media y correlación R. Indicar cuál obtuvo menor error según las mediciones, aunque no coincida con el ranking del paper. Distinguir NSE global de NSE por cuenca.
 
-**13:30–15:00. Controles y contraste con el paper.** Comparar FDMLP-LSTM con el bloque sin CReLU y LSTM multivariado con univariado. Indicar si el ranking de los cinco modelos coincide con la tabla 3 del artículo. Comparar cambios relativos y patrones, no RMSE absoluto en unidades y datasets distintos. No atribuir diferencias de una sola semilla a significancia estadística.
+**13:30–15:00. Controles y contraste con el paper.** Presentar el MLP real sin Fourier y las variantes residuales. Separar el efecto conjunto de conexión residual e inicialización del contraste entre módulos. Indicar que MLP tiene 312 parámetros de módulo y FDMLP 56, por lo que no se aísla únicamente la base de Fourier. Recordar que retirar CReLU evalúa la activación y que la comparación univariada mide el aporte meteorológico. Contrastar con la tabla 3 del paper sin comparar RMSE absoluto entre unidades y datasets distintos. Las diferencias de una semilla son descriptivas.
 
 **15:00–16:30. Errores.** Mostrar las curvas por horizonte y las ventanas seleccionadas automáticamente. Identificar suavizado de picos, retrasos o sesgos solo cuando las figuras los muestren. Los ejemplos abarcan error menor, mediano, mayor y el mayor caudal observado, su regla de selección está registrada. Describir los errores de caudales altos y bajos con las definiciones del informe.
 
@@ -44,3 +44,6 @@ La exposición se organiza en tres bloques de seis minutos. Las cifras finales y
 - **¿Puede la ablación mejorar el modelo?** Sí, ese resultado puede indicar que la no linealidad no ayuda bajo esta adaptación, no autoriza a ocultar el experimento.
 - **¿Es una reproducción exacta?** Se conserva el núcleo descrito en el artículo, pero el dataset, el horizonte, algunos detalles arquitectónicos no publicados en el texto principal y la precisión numérica requieren adaptaciones documentadas.
 - **¿La frecuencia representa ciclos de lluvia?** No directamente, aquí la FFT se aplica al eje de variables, no al tiempo, y depende del orden de canales.
+- **¿El FDMLP original empieza como identidad?** No, CReLU cambia la representación aunque las capas complejas aisladas tengan pesos identidad. Las variantes residuales conservan un camino directo y una corrección inicial pequeña.
+- **¿Las variantes residuales pertenecen al paper?** Son controles propios de la adaptación, se mantienen separados del método original. No se añadieron proyecciones de 128 dimensiones que no se pudieron confirmar.
+- **¿MLP frente a FDMLP prueba definitivamente la ventaja de Fourier?** No, también cambian conectividad y capacidad del módulo. La comparación aporta evidencia sobre estas implementaciones, no una atribución causal exclusiva a la base de Fourier.

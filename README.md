@@ -9,7 +9,7 @@ El objetivo es predecir 48 valores horarios de caudal a partir de 336 horas de 1
 | Archivo | Función |
 |---|---|
 | `datos.py` | Lectura por muestra, normalización y selección de variables con LASSO |
-| `modelos.py` | Operaciones complejas, FDMLP, LSTM y ablación |
+| `modelos.py` | FDMLP, comparadores, ablación y controles residuales |
 | `ejecutar.py` | Preparación, entrenamiento, validación, reanudación y predicciones |
 | `metricas.py` | RMSE, MAE, NSE, correlación y diagnóstico por cuenca |
 | `estudios.py` | Orquestación ampliada, robustez, benchmark y gradientes frecuenciales |
@@ -19,6 +19,7 @@ El objetivo es predecir 48 valores horarios de caudal a partir de 336 horas de 1
 | `RESULTADOS.md` | Comparación medida, gráficos, errores y limitaciones |
 | `GUION.md` | Organización de la exposición de 18 minutos y preguntas de comprensión |
 | `ADAPTACIONES.md` | Referencia original, configuración adoptada y justificación de diferencias |
+| `presentacion/Laboratorio_2_Revision_FDMLP.pptx` | Exposición de 18 diapositivas principales y tres de apoyo, con notas |
 | `resultados/` | Evidencia de pruebas, curvas, modelos y predicciones |
 
 No se necesita una API de OpenAI ni otro servicio externo para entrenar o ejecutar el modelo.
@@ -159,6 +160,21 @@ Las pruebas originales se conservan en `resultados/pruebas.json`. `validar.py --
 La entrega principal de predicciones es `resultados/fdmlp/predicciones_test.csv`, columnas `Id,q_01,...,q_48`. Las 27.983 filas mantienen el orden original. No se convierte de mm/h a m³/s, ni se utiliza el CSV de objetivos para elegir el modelo. Un menor error del baseline o de la ablación, si se observa, debe reportarse como resultado experimental y no ocultarse.
 
 La comprobación final está en `resultados/verificacion_final.json`: verifica correspondencia de métricas con checkpoints, igualdad exacta de los objetivos de validación, dimensiones y orden de los CSV, valores finitos y recorte correcto a cero. También registra las huellas SHA-256 del código y la configuración. Las huellas de los datos y documentos de entrada se conservan en `resultados/fuentes_sha256.json`.
+
+## Controles metodológicos adicionales
+
+`mlp`, `fdmlp_residual` y `mlp_residual` son controles propios y no reemplazan el FDMLP original. Permiten contrastar un MLP real sin Fourier y una estrategia de conexión residual con inicio cercano a identidad. La arquitectura y los límites de comparación figuran en `ADAPTACIONES.md`, los resultados se incorporan a `RESULTADOS.md`.
+
+```powershell
+.\.venv\Scripts\python.exe validar.py --controles
+.\.venv\Scripts\python.exe ejecutar.py entrenar --modelos mlp fdmlp_residual mlp_residual
+.\.venv\Scripts\python.exe ejecutar.py evaluar --modelos mlp fdmlp_residual mlp_residual
+.\.venv\Scripts\python.exe ejecutar.py predecir --modelos mlp fdmlp_residual mlp_residual
+.\.venv\Scripts\python.exe informe.py
+.\.venv\Scripts\python.exe estudios.py verificar
+```
+
+Las pruebas comprueban la inicialización cercana a identidad de ambos residuales, los mismos pesos iniciales del tronco LSTM y diez pasos de aprendizaje de cada modelo nuevo. Sus pesos se descartan. La revisión de resultados reutiliza las ejecuciones originales y no altera sus checkpoints. Los resultados con una semilla son descriptivos y no establecen significancia estadística. Las curvas de duración, predicciones crudas y pruebas previas se conservan como evidencia.
 
 ## Fuentes y observaciones de la consigna
 

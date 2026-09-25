@@ -36,6 +36,28 @@ El suplemento con la búsqueda de hiperparámetros no estuvo disponible. No se e
 
 ## Correspondencia de los experimentos
 
+### Controles del módulo y de su inicialización
+
+Se mantiene el modelo FDMLP original y su ablación sin CReLU. Esta última evalúa la activación, no el beneficio específico de Fourier. El bloque sin CReLU es afín y puede absorberse en la primera proyección de entrada de la LSTM; el bloque con CReLU no inicia como identidad. Una diferencia entre entrada y salida mide cambio de representación, no una fracción de información predictiva perdida. Estos controles se plantean después de evaluar la versión inicial, por lo que constituyen análisis exploratorios sobre la misma validación y no una confirmación independiente.
+
+Se añaden tres controles propios, separados de los cinco modelos atribuidos al paper:
+
+| Control | Implementación | Qué permite estudiar |
+|---|---|---|
+| MLP-LSTM | Linear(12,12) → ReLU → Linear(12,12), aplicado a cada hora | Referencia no lineal en el dominio original, sin Fourier |
+| FDMLP residual | x + FDMLP(x), segunda capa compleja inicializada con peso real 0,01, imaginario y sesgos cero | Estrategia conjunta de camino directo e inicio cercano a identidad |
+| MLP residual | x + MLP(x), salida inicializada a 0,01 I y sesgos cero | Misma estrategia de preservación inicial con un módulo real |
+
+Los MLP usan peso identidad y sesgo cero en su primera capa; sin residual, su segunda capa también inicia con identidad. Las capas se entrenan sin restringirse a matrices identidad o diagonales. La escala 0,01 se fija antes del entrenamiento, para que la corrección inicial sea pequeña y haya gradientes hacia la primera capa. No es un hiperparámetro atribuido a los autores ni ajustado a validación. La conexión residual y su inicialización cambian conjuntamente; no se atribuye el efecto observado solo a una de ellas.
+
+Se conservan tronco LSTM, inicialización del tronco, normalización, datos, batch, tasa, pérdida, semilla 42 y parada temprana. El módulo real tiene 312 parámetros y el frecuencial 56, una diferencia de 256, alrededor del 0,12% del modelo completo. Esa cercanía global no implica capacidad idéntica de los módulos. Las conexiones densas reales son una referencia MLP convencional; el FDMLP conserva el producto elemento a elemento explícito de la ecuación 11. Su comparación no constituye una prueba aislada de la base de Fourier.
+
+Los 65 componentes de la figura 15 no identifican de forma única una proyección Linear(12,128). El suplemento no disponible impide confirmar esa arquitectura. Por ello no se incorpora esa proyección como una supuesta corrección obligatoria. Tampoco se exige invariancia ante cualquier permutación: la dependencia del orden es una limitación de la parametrización, y un ensayo con pesos fijos no equivale a comparar modelos reentrenados con órdenes diferentes.
+
+Se ejecuta primero una semilla, conservando las ejecuciones previas. La decisión sobre repeticiones adicionales se documenta con los tiempos medidos en `resultados/presupuesto_semillas.json`. El número de repeticiones se decide por coste, sin usar qué modelo gana como criterio de continuación. Las 60 condiciones de robustez y el benchmark original corresponden a los cinco comparadores originales y sus controles previos, no se atribuyen automáticamente a las nuevas variantes.
+
+### Estudios del artículo
+
 | Estudio del artículo | Estudio con este dataset | Adaptación necesaria |
 |---|---|---|
 | Cinco modelos, tabla 3 | LSTM, AM-LSTM, CNN-LSTM, GNN-LSTM y FDMLP-LSTM | Mismas ventanas horarias y mismo tronco, además de controles univariado, ablación y persistencia |

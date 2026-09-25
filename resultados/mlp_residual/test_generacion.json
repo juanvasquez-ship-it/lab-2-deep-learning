@@ -1,0 +1,8 @@
+{
+  "rows": 27983,
+  "horizon": 48,
+  "units": "mm/h",
+  "seconds": 4.960295900003985,
+  "negative_raw_values_clipped": 109629,
+  "test_targets_used": false
+}

@@ -45,6 +45,39 @@ class FDMLP(nn.Module):
                                    dim=-1, norm="ortho")
 
 
+class FDMLPResidual(nn.Module):
+    """Variante experimental: conserva la entrada y añade una rama frecuencial."""
+
+    def __init__(self, variables, initial_scale=0.01):
+        super().__init__()
+        self.bloque = FDMLP(variables)
+        nn.init.constant_(self.bloque.salida.peso_real, initial_scale)
+
+    def forward(self, x):
+        return x + self.bloque(x)
+
+
+class MLPVariables(nn.Module):
+    """Control real 12→12→12 por instante, con residual opcional."""
+
+    def __init__(self, variables, residual=False, initial_scale=0.01):
+        super().__init__()
+        self.residual = residual
+        self.entrada = nn.Linear(variables, variables)
+        self.salida = nn.Linear(variables, variables)
+        nn.init.eye_(self.entrada.weight)
+        nn.init.eye_(self.salida.weight)
+        nn.init.zeros_(self.entrada.bias)
+        nn.init.zeros_(self.salida.bias)
+        if residual:
+            with torch.no_grad():
+                self.salida.weight.mul_(initial_scale)
+
+    def forward(self, x):
+        y = self.salida(torch.relu(self.entrada(x)))
+        return x + y if self.residual else y
+
+
 class AtencionVariables(nn.Module):
     """Ponderación por variable con contexto recurrente, ecuaciones 2–5."""
 
@@ -118,6 +151,10 @@ class Pronosticador(nn.Module):
             self.caracteristicas = nn.Identity()
         elif kind in ("fdmlp", "fdmlp_lineal"):
             self.caracteristicas = FDMLP(variables, nonlinear=kind == "fdmlp")
+        elif kind == "fdmlp_residual":
+            self.caracteristicas = FDMLPResidual(variables, **feature_config)
+        elif kind in ("mlp", "mlp_residual"):
+            self.caracteristicas = MLPVariables(variables, residual=kind == "mlp_residual", **feature_config)
         elif kind == "am":
             self.caracteristicas = AtencionVariables(variables, **feature_config)
         elif kind == "cnn":

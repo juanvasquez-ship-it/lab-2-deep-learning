@@ -35,6 +35,21 @@
       "RMSE": 0.10561709446113389,
       "best_epoch": 16,
       "passed": true
+    },
+    "mlp": {
+      "RMSE": 0.10168262906494478,
+      "best_epoch": 14,
+      "passed": true
+    },
+    "fdmlp_residual": {
+      "RMSE": 0.1019891628021174,
+      "best_epoch": 12,
+      "passed": true
+    },
+    "mlp_residual": {
+      "RMSE": 0.10173109835408758,
+      "best_epoch": 14,
+      "passed": true
     }
   },
   "robustness_cases": 60,
@@ -43,13 +58,13 @@
   "test_export_checked": true,
   "source_sha256": {
     "datos.py": "cd30e3e8a59cd32b6695ed0a4a4c6f37bb99c5eb3eafe1201eec30844bc13325",
-    "ejecutar.py": "b27605d698e988f078bf1cdf0d51e5059e1b1159c7ae02ffd452688a250651ec",
+    "ejecutar.py": "17ce2865c31fee6b6734201fade09c39f46a49e684b8f2f32b147eb659cd4a93",
     "estudios.py": "b12ba5f07205b9ce7ee8622c980cd96c3dc1c136bfc0ad3d0a77a56508f8bcb6",
-    "informe.py": "f3bd7f5ff98d62c7de9f98da8efabcf27272795e7fc2f77290ba464db0d96612",
+    "informe.py": "ded9eea3da530e56688e58a0cb286b913cc4da9149a4386bf0d0516140ed1d2d",
     "metricas.py": "7a3fc4349ca28c99dbd2dcdc7d6181ebd6ab2b226422d69ba6db4168d995c277",
-    "modelos.py": "f01b48a7fdce16d257ef9220a22da708c655a9b39f44dce8c4b106282ca897c2",
-    "validar.py": "69c8f06fab5101b0dee006ee86e40af5c844c6ba62b6b0884399279a598e4ba0",
-    "config.json": "10061f8a18e65ce15517c922e74d84ebcf1eb8380483ceeaf4129b4952a8659d",
+    "modelos.py": "bc617af91ce40cecd7562f422168f9100e4a7392d333f6bf69c8e6ad9398fd75",
+    "validar.py": "b5bde5d3bfc82ba2b778b8c0f545c60117df16835abd456069349573d256e427",
+    "config.json": "587c56d7d17cc068fdaa900d9dd13629d2e36ece1c917fb6ed339f3390d33f4a",
     "requirements.txt": "15703fd4f97c54fdb3563b1d27d8b71213a02faca1021c0fad087de5453db76e"
   }
 }

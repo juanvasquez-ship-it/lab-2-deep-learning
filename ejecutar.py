@@ -21,7 +21,7 @@ from torch.utils.data import DataLoader
 from datos import ROOT, CaudalDataset, guardar_json, preparar, ruta
 from modelos import Pronosticador
 
-MODELOS = ["lstm", "am", "cnn", "gnn", "fdmlp", "fdmlp_lineal", "lstm_uni"]
+MODELOS = ["lstm", "am", "cnn", "gnn", "fdmlp", "fdmlp_lineal", "lstm_uni", "mlp", "fdmlp_residual", "mlp_residual"]
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")

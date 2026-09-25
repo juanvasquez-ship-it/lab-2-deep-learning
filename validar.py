@@ -109,6 +109,72 @@ def ampliacion():
     print("AMPLIACIÓN VALIDADA", json.dumps(trials), flush=True)
 
 
+def controles():
+    """Comprueba controles sin Fourier, inicialización y conservación del tronco."""
+    cfg = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+    prep = json.loads((ROOT / "resultados/preprocesamiento.json").read_text(encoding="utf-8"))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    semilla(cfg["seed"])
+    ds = CaudalDataset(cfg["train_path"], prep, 0)
+    ids = np.random.default_rng(cfg["seed"]).choice(len(ds), cfg["batch_size"], replace=False)
+    items = [ds[int(i)] for i in ids]
+    x = torch.from_numpy(np.stack([r[0] for r in items])).to(device)
+    y = torch.from_numpy(np.stack([r[1] for r in items])).to(device)
+    semilla(cfg["seed"])
+    reference = modelo("lstm", cfg, prep, device)
+    trials = []
+    for kind in ("fdmlp", "mlp", "fdmlp_residual", "mlp_residual"):
+        semilla(cfg["seed"])
+        net = modelo(kind, cfg, prep, device)
+        for key, value in reference.lstm.state_dict().items():
+            torch.testing.assert_close(net.lstm.state_dict()[key], value, rtol=0, atol=0)
+        with torch.no_grad():
+            transformed = net.caracteristicas(x)
+            change = float((transformed-x).norm()/x.norm())
+            if kind.endswith("residual"):
+                assert change < 0.011
+            if kind == "fdmlp_residual":
+                original = FDMLP(x.shape[-1]).to(device)
+                torch.testing.assert_close(transformed, x+0.01*original(x), atol=1e-6, rtol=1e-5)
+            if kind == "mlp":
+                torch.testing.assert_close(transformed, torch.relu(x), atol=1e-6, rtol=1e-5)
+            if kind == "mlp_residual":
+                torch.testing.assert_close(transformed, x+0.01*torch.relu(x), atol=1e-6, rtol=1e-5)
+        record = {"model": kind, "initial_relative_input_change": change,
+                  "parameters": sum(p.numel() for p in net.parameters()),
+                  "feature_parameters": sum(p.numel() for p in net.caracteristicas.parameters())}
+        if kind != "fdmlp":
+            optimizer = torch.optim.Adam(net.parameters(), lr=cfg["learning_rate"])
+            amp = cfg["mixed_precision"] and device.type == "cuda"
+            scaler = torch.cuda.amp.GradScaler(enabled=amp)
+            before = net.salida.weight.detach().clone()
+            losses = []
+            start = time.perf_counter()
+            for _ in range(10):
+                optimizer.zero_grad(set_to_none=True)
+                with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
+                    prediction = net(x)
+                    assert prediction.shape == y.shape
+                    loss = torch.nn.functional.mse_loss(prediction, y)
+                assert torch.isfinite(loss)
+                scaler.scale(loss).backward()
+                scaler.unscale_(optimizer)
+                assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in net.parameters())
+                torch.nn.utils.clip_grad_norm_(net.parameters(), cfg["gradient_clip"])
+                scaler.step(optimizer)
+                scaler.update()
+                losses.append(float(loss.detach()))
+            sincronizar(device)
+            assert not torch.equal(before, net.salida.weight)
+            record.update(pilot_steps=10, seconds=time.perf_counter()-start, losses=losses)
+        trials.append(record)
+    ds.close()
+    guardar_json(ROOT / "resultados/pruebas_controles.json", {"passed": True, "seed": cfg["seed"],
+                 "sample_ids": [int(r[2]) for r in items], "same_initial_lstm": True,
+                 "pilot_weights_used_in_final_training": False, "trials": trials})
+    print("Controles verificados, pesos piloto descartados", flush=True)
+
+
 def main():
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     prep = json.loads((ROOT / "resultados/preprocesamiento.json").read_text(encoding="utf-8"))
@@ -218,7 +284,11 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--nuevos", action="store_true")
-    if parser.parse_args().nuevos:
+    parser.add_argument("--controles", action="store_true")
+    args = parser.parse_args()
+    if args.controles:
+        controles()
+    elif args.nuevos:
         ampliacion()
     else:
         main()
