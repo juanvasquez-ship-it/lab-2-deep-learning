@@ -102,7 +102,7 @@ def preparar(config):
 
 
 class CaudalDataset(Dataset):
-    def __init__(self, path, prep, split=None, ids=None):
+    def __init__(self, path, prep, split=None):
         self.path = str(ruta(path))
         self._file, self._pid = None, None
         self.selected = np.asarray(prep["selected"])
@@ -113,8 +113,6 @@ class CaudalDataset(Dataset):
             self.has_target = "y" in f
             self.ids = np.arange(len(f["X"])) if split is None else np.flatnonzero(f["split"][:] == split)
             self.basins = f["basin_id"][:]
-        if ids is not None:
-            self.ids = np.asarray(ids)
 
     def __len__(self):
         return len(self.ids)

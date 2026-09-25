@@ -49,7 +49,7 @@ class DatosPerturbados(Dataset):
         return perturbar(x, self.kind, self.level, self.seed, identifier, self.channels), y, identifier, basin, last
 
 
-def cargar(kind, config, device):
+def cargar(kind, device):
     checkpoint = torch.load(ROOT / "resultados" / kind / "mejor.pt", map_location=device)
     net = modelo(kind, checkpoint["config"], checkpoint["prep"], device)
     net.load_state_dict(checkpoint["state_dict"])
@@ -69,7 +69,7 @@ def robustez(config, device):
                  "imputation": "linear interpolation within history; nearest observed at edges; training mean if all missing",
                  "retraining_after_corruption": False, "seed": config["seed"]})
     for model_kind in PRINCIPALES:
-        net, prep = cargar(model_kind, config, device)
+        net, prep = cargar(model_kind, device)
         clean = dict(np.load(ROOT / "resultados" / model_kind / "validacion.npz"))
         base = CaudalDataset(config["train_path"], prep, 1)
         for scope, channels in [("todas", list(range(len(prep["selected"])))),
@@ -113,7 +113,7 @@ def eficiencia(config, device):
     amp = config["mixed_precision"] and device.type == "cuda"
     for kind in config["models"]:
         semilla(config["seed"])
-        net, pp = cargar(kind, config, device)
+        net, pp = cargar(kind, device)
         xx = x[..., [prep["selected"].index(c) for c in pp["selected"]]]
         net.eval()
         with torch.no_grad(), torch.autocast(device_type=device.type, dtype=torch.float16, enabled=amp):
@@ -165,7 +165,7 @@ def interpretabilidad(config, device):
     target = ROOT / "resultados/interpretabilidad.json"
     if target.exists():
         return
-    net, prep = cargar("fdmlp", config, device)
+    net, prep = cargar("fdmlp", device)
     ds = CaudalDataset(config["train_path"], prep, 1)
     # cuDNN requiere modo train para derivar una LSTM. No hay dropout ni
     # normalización con estado, y no se realiza ninguna actualización de pesos.
@@ -253,9 +253,9 @@ def main():
                 folder = ROOT / "resultados" / kind
                 guardar_json(status, {"status": "running", "stage": "evaluation", "model": kind})
                 if not (folder / "validacion.npz").exists():
-                    evaluar(kind, config, prep, device)
+                    evaluar(kind, device)
                 if not (folder / "predicciones_test.csv").exists():
-                    evaluar(kind, config, prep, device, test=True)
+                    evaluar(kind, device, test=True)
         for action, label, function in [("eficiencia", "benchmark", eficiencia),
                                          ("robustez", "robustness", robustez),
                                          ("interpretar", "interpretability", interpretabilidad)]:

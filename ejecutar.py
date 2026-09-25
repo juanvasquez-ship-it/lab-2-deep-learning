@@ -218,7 +218,7 @@ def entrenar(kind, config, prep, device):
     val.close()
 
 
-def evaluar(kind, config, prep, device, test=False):
+def evaluar(kind, device, test=False):
     folder = ROOT / "resultados" / kind
     checkpoint = torch.load(folder / "mejor.pt", map_location=device)
     config, prep = checkpoint["config"], checkpoint["prep"]
@@ -270,9 +270,9 @@ def main():
         if args.accion in ("entrenar", "todo"):
             entrenar(kind, config, prep, device)
         if args.accion in ("evaluar", "todo"):
-            evaluar(kind, config, prep, device)
+            evaluar(kind, device)
         if args.accion in ("predecir", "todo"):
-            evaluar(kind, config, prep, device, test=True)
+            evaluar(kind, device, test=True)
 
 
 if __name__ == "__main__":
