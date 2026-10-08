@@ -17,16 +17,14 @@ El objetivo es predecir 48 valores horarios de caudal a partir de 336 horas de 1
 | `informe.py` | Tablas, figuras y `RESULTADOS.md` a partir de las ejecuciones |
 | `config.json` | Rutas y configuración utilizada |
 | `RESULTADOS.md` | Comparación medida, gráficos, errores y limitaciones |
-| `GUION.md` | Organización de la exposición de 18 minutos y preguntas de comprensión |
 | `ADAPTACIONES.md` | Referencia original, configuración adoptada y justificación de diferencias |
-| `presentacion/Laboratorio_2_Revision_FDMLP.pptx` | Exposición de 18 diapositivas principales y tres de apoyo, con notas |
 | `resultados/` | Evidencia de pruebas, curvas, modelos y predicciones |
 
-No se necesita una API de OpenAI ni otro servicio externo para entrenar o ejecutar el modelo.
+El entrenamiento y la inferencia se ejecutan localmente, sin servicios externos.
 
 ## Contenido del repositorio
 
-El repositorio incluye código, documentación, métricas, figuras, checkpoints y predicciones de las ejecuciones realizadas. Los archivos HDF5 del dataset y el entorno `.venv` se conservan localmente y no se distribuyen en Git.
+El repositorio incluye código, configuración, documentación técnica, métricas, figuras, checkpoints y predicciones de las ejecuciones realizadas. Los archivos HDF5 del dataset y el entorno `.venv` se conservan localmente y no se distribuyen en Git.
 
 Los registros de consola, los estados transitorios de progreso y los archivos temporales de guardado se generan localmente cuando se ejecutan los scripts y se excluyen de Git. La evidencia permanente del entrenamiento se conserva en `historial.csv` y `finalizado.json` de cada modelo. Los checkpoints, las pruebas de validación y las predicciones crudas se mantienen para reanudación, verificación y análisis.
 
@@ -157,7 +155,7 @@ El análisis final está en `RESULTADOS.md`. Las métricas principales son NSE, 
 
 Las pruebas originales se conservan en `resultados/pruebas.json`. `validar.py --nuevos` ejecuta únicamente las comprobaciones de los comparadores añadidos, incluyendo gradientes, cinco pasos de optimización por modelo, operaciones de grafo/atención y compatibilidad con los checkpoints previos. Su evidencia está en `resultados/pruebas_ampliacion.json`.
 
-La entrega principal de predicciones es `resultados/fdmlp/predicciones_test.csv`, columnas `Id,q_01,...,q_48`. Las 27.983 filas mantienen el orden original. No se convierte de mm/h a m³/s, ni se utiliza el CSV de objetivos para elegir el modelo. Un menor error del baseline o de la ablación, si se observa, debe reportarse como resultado experimental y no ocultarse.
+El archivo principal de predicciones es `resultados/fdmlp/predicciones_test.csv`, columnas `Id,q_01,...,q_48`. Las 27.983 filas mantienen el orden original. No se convierte de mm/h a m³/s, ni se utiliza el CSV de objetivos para elegir el modelo. La comparación experimental incluye los resultados de todos los modelos, baselines y ablaciones.
 
 La comprobación final está en `resultados/verificacion_final.json`: verifica correspondencia de métricas con checkpoints, igualdad exacta de los objetivos de validación, dimensiones y orden de los CSV, valores finitos y recorte correcto a cero. También registra las huellas SHA-256 del código y la configuración. Las huellas de los datos y documentos de entrada se conservan en `resultados/fuentes_sha256.json`.
 
@@ -176,11 +174,9 @@ La comprobación final está en `resultados/verificacion_final.json`: verifica c
 
 Las pruebas comprueban la inicialización cercana a identidad de ambos residuales, los mismos pesos iniciales del tronco LSTM y diez pasos de aprendizaje de cada modelo nuevo. Sus pesos se descartan. La revisión de resultados reutiliza las ejecuciones originales y no altera sus checkpoints. Los resultados con una semilla son descriptivos y no establecen significancia estadística. Las curvas de duración, predicciones crudas y pruebas previas se conservan como evidencia.
 
-## Fuentes y observaciones de la consigna
+## Referencias
 
 - `Laboratorio 2.pdf`, instrucciones locales suministradas, tres páginas.
-- `main (2).pdf`, artículo completo suministrado, quince páginas.
-- `metadata.json`, descripción efectiva del dataset, canal objetivo 11 y particiones.
+- Jia et al., *Enhancing streamflow forecasting using an LSTM hybrid model with lightweight frequency-domain feature learning*, Expert Systems with Applications 297 (2026), 129418. DOI: https://doi.org/10.1016/j.eswa.2025.129418.
+- `data/metadata.json`, descripción efectiva del dataset, canal objetivo 11 y particiones.
 - Instalación PyTorch: https://pytorch.org/get-started/previous-versions/#v211.
-
-La consigna contiene fechas contradictorias, el encabezado indica entrega el 1 de octubre y revisión el 3, mientras los títulos posteriores dicen jueves 3 y sábado 5. Esta diferencia no afecta el código y debe resolverse por el calendario oficial del curso. El video tiene un máximo de 18 minutos y la evaluación posterior es individual, el material de presentación se apoya en la metodología, implementación y resultados reales aquí conservados.
